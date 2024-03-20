@@ -26,7 +26,6 @@ jobs:
       - name: cài win và khởi chạy
         run: |
           sudo chmod 666 /dev/kvm
-          sudo qemu-img create -f qcow2 /mnt/a.qcow2 60G
           sudo qemu-img create -f raw a.img 64G
           wget -O file.iso "${{ github.event.inputs.link_iso }}" &>/dev/null &
           while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
@@ -34,7 +33,7 @@ jobs:
           while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
           echo "thanh cong"
           curl --silent --show-error http://127.0.0.1:4040/api/tunnels | sed -nE 's/.*public_url":"tcp:..([^"]*).*/\1/p'
-          qemu-system-x86_64 -cpu qemu64 -smp 4 -m 4G -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom -drive file=a.img,format=raw -boot d -device virtio-net-pci -vnc :0
+          qemu-system-x86_64 -cpu qemu64 -smp 4 -m 4G -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom -drive file=a.img,format=raw -boot d -device virtio-net-pci -vnc :0
           while ps axg | grep -vw grep | grep -w qemu-system-x86_64 > /dev/null; do sleep 1; done
           while ps axg | grep -vw grep | grep -w kvm > /dev/null; do sleep 1; done
           timeout /t 43200 > nul
